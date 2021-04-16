@@ -1,9 +1,5 @@
-/**
- * Simple base class, which setups a simple scene which is used to 
- * demonstrate the different loaders. This create a scene, three
- * lights, and slowly rotates the model, around the z-axis
- */
-function BaseLoaderScene(providedCamera, shouldAddLights, shouldRotate, updateMesh,texture) {
+
+function BaseLoaderScene(providedCamera, shouldAddLights, shouldRotate, texture) {
 
   self = this;
 
@@ -11,10 +7,11 @@ function BaseLoaderScene(providedCamera, shouldAddLights, shouldRotate, updateMe
   this.scene = new THREE.Scene();
   this.stats = initStats();
   this.clock = new THREE.Clock();
+  this.t = 0;
+
   this.camera = providedCamera;
   this.withLights = (shouldAddLights !== undefined) ? shouldAddLights : true;
   this.shouldRotate = (shouldRotate !== undefined) ? shouldRotate : true;
-  this.updateMesh = updateMesh
   this.texture=(texture !== undefined) ? texture : true;
 
   var urls = [
@@ -43,43 +40,49 @@ function BaseLoaderScene(providedCamera, shouldAddLights, shouldRotate, updateMe
   this.renderer = initRenderer({
     antialias: true
   });
+  this.renderer.shadowMap.enabled = true;
 
-  //this.trackballControls = initTrackballControls(this.camera, this.renderer);
+  this.trackballControls = initTrackballControls(this.camera, this.renderer);
 
-  /**
-   * Start the render loop of the provided object
-   * 
-   * @param {Three.Object3D} mesh render this mesh or object
-   * @param {*} camera render using the provided camera settings
-   */
-  this.render = function (mesh, camera) {
+  
+  this.render = function (mesh, camera, orbit) {
     self.scene.add(mesh);
     self.camera = camera;
     self.mesh = mesh;
-    self._render();
-    console.log(self.scene)
+    self.t = 0;
+    self._render(orbit);
+    //console.log(self.scene)
   }
 
-  /**
-   * Internal function, called continously to render the scene
-   */
-  this._render = function () {
+  this._render = function (orbit) {
     self.stats.update();
-    requestAnimationFrame(self._render);
-    //self.trackballControls.update(self.clock.getDelta());
+    self.trackballControls.update(self.clock.getDelta());
 
-    if (updateMesh) this.updateMesh(self.mesh)   
-      self.mesh.rotation.y += .01    
-    
+    /*                                                  // for child-parent
+    self.mesh.children.forEach(function (child) {
+      if (orbit) {
+        self.t += 0.004;          
+        child.position.x = 160 * Math.cos(self.t) - 50;
+        child.position.z = 160 * Math.sin(self.t) - 300 ; 
+      }
+      self.renderer.render(self.scene, self.camera);
+    }); 
+    */
+
+    if (orbit) {              // for group
+      self.t += 0.004;          
+      self.mesh.position.x = 160 * Math.cos(self.t) - 50;
+      self.mesh.position.z = 160 * Math.sin(self.t) - 300 ;
+    }
     self.renderer.render(self.scene, self.camera);
+
+    requestAnimationFrame(self._render);
   }
 
-  /**
-   * Internal function, which adds a number of lights to the scene.
-   */
+  
   this._addLights = function () {
     var keyLight = new THREE.SpotLight(0xffffff);
-    keyLight.position.set(00, 80, 80);
+    keyLight.position.set(-100, 100, 100);
     keyLight.intensity = 2;
     keyLight.lookAt(new THREE.Vector3(0, 15, 0));
     keyLight.castShadow = true;
@@ -100,7 +103,6 @@ function BaseLoaderScene(providedCamera, shouldAddLights, shouldRotate, updateMe
     this.scene.add(backlight2);
   }
 
-  // add the lights
   if (this.withLights) this._addLights();
 
 }
