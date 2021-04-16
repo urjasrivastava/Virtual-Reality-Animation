@@ -3,7 +3,7 @@
  * demonstrate the different loaders. This create a scene, three
  * lights, and slowly rotates the model, around the z-axis
  */
-function BaseLoaderScene(providedCamera, shouldAddLights, shouldRotate, updateMesh) {
+function BaseLoaderScene(providedCamera, shouldAddLights, shouldRotate, updateMesh,texture) {
 
   self = this;
 
@@ -15,6 +15,7 @@ function BaseLoaderScene(providedCamera, shouldAddLights, shouldRotate, updateMe
   this.withLights = (shouldAddLights !== undefined) ? shouldAddLights : true;
   this.shouldRotate = (shouldRotate !== undefined) ? shouldRotate : true;
   this.updateMesh = updateMesh
+  this.texture=(texture !== undefined) ? texture : true;
 
   var urls = [
       './assets/textures/cubemap/top.png',
@@ -24,9 +25,20 @@ function BaseLoaderScene(providedCamera, shouldAddLights, shouldRotate, updateMe
       './assets/textures/cubemap/top.png',
       './assets/textures/cubemap/top.png'
   ];
-  
+  var urls1 = [
+    './assets/textures/cubemap/top1.png',
+    './assets/textures/cubemap/top1.png',
+    './assets/textures/cubemap/top1.png',
+    './assets/textures/cubemap/top1.png',
+    './assets/textures/cubemap/top1.png',
+    './assets/textures/cubemap/top1.png'
+];
+
   var cubeLoader = new THREE.CubeTextureLoader();
+  if(this.texture===true)
   this.scene.background = cubeLoader.load(urls);
+  else
+  this.scene.background = cubeLoader.load(urls1);
   // initialize basic renderer
   this.renderer = initRenderer({
     antialias: true
@@ -57,7 +69,7 @@ function BaseLoaderScene(providedCamera, shouldAddLights, shouldRotate, updateMe
     //self.trackballControls.update(self.clock.getDelta());
 
     if (updateMesh) this.updateMesh(self.mesh)   
-      //self.mesh.position.x += .1    
+      self.mesh.rotation.y += .01    
     
     self.renderer.render(self.scene, self.camera);
   }
