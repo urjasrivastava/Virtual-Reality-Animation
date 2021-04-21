@@ -128,6 +128,16 @@ function initTrackballControls(camera, renderer) {
 
     return trackballControls;
 }
+function initFlyControls(camera,renderer)
+{  
+    
+    var flyControls = new THREE.FlyControls(camera,renderer.domElement);
+    flyControls.movementSpeed = 25;
+    flyControls.rollSpeed = Math.PI / 24;
+    flyControls.autoForward = true;
+    flyControls.dragToLook = false;
+    return flyControls;
+}
 
 /**
  * Apply a simple standard material to the passed in geometry and return the mesh
