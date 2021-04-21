@@ -3,15 +3,15 @@
  * demonstrate the different loaders. This create a scene, three
  * lights, and slowly rotates the model, around the z-axis
  */
-function BaseLoaderScene(groundLights,texture,spotlight) {
+function BaseLoaderScene(groundLights, texture, spotlight) {
   self = this;
   // setup some default elements
-  this.camera = initCamera(new THREE.Vector3(0, 0, 70));   
+  this.camera = initCamera(new THREE.Vector3(0, 0, 70));
   this.scene = new THREE.Scene();
   this.stats = initStats();
   this.clock = new THREE.Clock();
   this.withLights = groundLights;
-  this.spotlight=spotlight;
+  this.spotlight = spotlight;
   this.texture = texture;
   this.flyControls;
   this.firstPersonControl;
@@ -164,8 +164,24 @@ function BaseLoaderScene(groundLights,texture,spotlight) {
       self.group.add(spaceship);             // for group
       self.group.add(follower1);
       self.group.add(follower2);
+      var mtlLoader = new THREE.MTLLoader();
+      mtlLoader.setPath("./assets/models/mario-sculpture-obj/")
+      mtlLoader.load('mario-sculpture.mtl', function (materials) {
+        materials.preload();
+        var objLoader = new THREE.OBJLoader();
+        objLoader.setMaterials(materials);
+        objLoader.load('./assets/models/mario-sculpture-obj/mario-sculpture.obj', function (object) {
+          object.scale.set(.2, .2, .2);
+          object.position.set(-40,-30,40);
+          object.rotation.y = 60;
+          object.name = "avatar";
+          self.group.add(object);
+        });
+      });
       self.group.position.set(0, 0, -50);
     });
+
+
   }
   this.updateScene = function () {
     var urls = [
@@ -206,10 +222,9 @@ function BaseLoaderScene(groundLights,texture,spotlight) {
     }
     if (self.withLights === 1)
       self._addLights();
-    if(self.spotlight===1)
+    if (self.spotlight === 1)
       self.addSpotLight();
     self.scene.add(self.group);
-    console.log(self.scene);
     self.render(self.scene, self.camera);
   }
   //this.trackballControls = initTrackballControls(this.camera, this.renderer);
@@ -229,15 +244,15 @@ function BaseLoaderScene(groundLights,texture,spotlight) {
    */
   this._render = function () {
     self.stats.update();
-    if(self.flyControls!==undefined)
-    self.flyControls.update(self.clock.getDelta());
+    if (self.flyControls !== undefined)
+      self.flyControls.update(self.clock.getDelta());
     requestAnimationFrame(self._render);
     self.renderer.render(self.scene, self.camera);
   }
-  this.addSpotLight=function(){
+  this.addSpotLight = function () {
     var spotLight = new THREE.SpotLight("#ffffff");
     spotLight.position.set(-20, 90, 30);
-    spotLight.target =self.group;
+    spotLight.target = self.group;
     spotLight.distance = 0;
     spotLight.angle = 0.4;
     self.scene.add(spotLight);
@@ -283,19 +298,18 @@ function BaseLoaderScene(groundLights,texture,spotlight) {
     self.updateScene();
   }
   this.updateCamera = function (cam) {
-    if(cam===1)
-    { 
-      self.flyControls=undefined;
-      self.firstPersonControl=undefined;      
+    if (cam === 1) {
+      self.flyControls = undefined;
+      self.firstPersonControl = undefined;
+      self.camera = initCamera(new THREE.Vector3(0, 0, 70));
     }
-    if(cam===2)
-    {
-      self.flyControls= initFlyControls(self.camera,self.renderer);
+    if (cam === 2) {
+      self.flyControls = initFlyControls(self.camera, self.renderer);
     }
     self.render(self.scene, self.camera);
   }
   this.updateSpotLights = function (spotlight) {
-    self.spotlight=spotlight;
+    self.spotlight = spotlight;
     self.updateScene();
   }
 
