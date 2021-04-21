@@ -180,8 +180,6 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
       });
       self.group.position.set(0, 0, -50);
     });
-
-
   }
   this.updateScene = function () {
     var urls = [
