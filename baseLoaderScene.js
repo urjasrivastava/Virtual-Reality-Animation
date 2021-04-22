@@ -24,9 +24,6 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
   this.group = new THREE.Group();
   this.group_of_asteriods = new THREE.Group();
   this.group_of_candies = new THREE.Group();
-  this.mario;
-  this.astronaut;
-  this.alein;
 
   this.initObjects = function () {
     var textureLoader = new THREE.TextureLoader();
@@ -146,7 +143,10 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
     self.candy3.position.z = -70;
     self.candy3.name = "dynamic"
     self.group_of_candies.add(self.candy3);
-
+    
+  }
+  this.initMovingObjects= function(){
+    var textureLoader = new THREE.TextureLoader();
     self.group = new THREE.Group();
     var loader = new THREE.OBJLoader();
     loader.load('./assets/models/spaceship/SciFi_Fighter_AK5.obj', function (spaceship) {
@@ -179,9 +179,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
       self.group.add(spaceship);             // for group
       self.group.add(follower1);
       self.group.add(follower2);
-      self.group.position.set(0, 0, -50);
-
-      
+      self.group.position.set(0, 0, -50);     
 
       if (self.texture === 1) {   // alien for space texture
         var _objloader = new THREE.OBJLoader();
@@ -198,19 +196,17 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
             child.geometry.computeVertexNormals();
             child.geometry.computeFaceNormals();
           });
-          self.astronaut = astronaut;
-          self.astronaut.scale.set(0.2, 0.2, 0.2);
-          self.astronaut.position.set(0, -10, -50);
-          self.astronaut.rotation.y = 3;
-          self.astronaut.castShadow = true;
-          self.astronaut.name = "avatar_1"
+          astronaut.scale.set(0.2, 0.2, 0.2);
+          astronaut.position.set(0, -10, -50);
+          astronaut.rotation.y = 3;
+          astronaut.castShadow = true;
+          astronaut.name = "avatar_1"
           if (self.attach === 1) {
-            self.astronaut.position.set(-40, -40, -50);
-            self.group.add(self.astronaut);
+            astronaut.position.set(-40, -50, -50);
+            self.group.add(astronaut);
           }
         });
-      }
-   
+      }   
       else if (self.texture === 2) {
         var mtlLoader = new THREE.MTLLoader();
         mtlLoader.setPath("./assets/models/mario-sculpture-obj/")
@@ -219,20 +215,16 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
         var objLoader = new THREE.OBJLoader();
         objLoader.setMaterials(materials);
         objLoader.load('./assets/models/mario-sculpture-obj/mario-sculpture.obj', function (mario) {
-          self.mario = mario;
-          self.mario.scale.set(.2, .2, .2);
-          self.mario.position.set(0, -10, -50);
-          self.mario.rotation.y = 60;
-          self.mario.name = "avatar_2";
+          mario.scale.set(.2, .2, .2);
+          mario.rotation.y = 60;
+         mario.name = "avatar_2";
           if (self.attach === 1) {
-            self.mario.position.set(-40, -40, -50);
-            self.group.add(self.mario); 
+           mario.position.set(-40, -30, -50);
+            self.group.add(mario); 
           }
-
         });
       });
-    }
-    
+    }    
     });
   }
   this.updateScene = function () {
@@ -259,18 +251,12 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
       self.scene.background = cubeLoader.load(urls);
       self.scene.add(self.earth);
       self.scene.add(self.mars);
-      if(self.attach === 0) {
-         self.scene.add(self.astronaut);
-      }
       self.scene.add(self.group_of_asteriods);
     }
     else if (self.texture === 2){
       self.scene.background = cubeLoader.load(urls1);
       self.scene.add(self.candycylinder1);
       self.scene.add(self.candycylinder2);
-      if (self.attach === 0) {
-          self.scene.add(self.mario);
-      }
       self.scene.add(self.group_of_candies);
     }
 
@@ -370,6 +356,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
 
   this.updateTexture = function (texture) {
     self.texture = texture;
+    self.initMovingObjects();
     self.updateScene();
   }
   this.updateLights = function (lights) {
@@ -393,6 +380,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
   }
   this.updateAvatar = function (attach) {
     self.attach = attach;
+    self.initMovingObjects();
     self.updateScene();
   }
 
