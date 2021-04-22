@@ -3,9 +3,10 @@
  * demonstrate the different loaders. This create a scene, three
  * lights, and slowly rotates the model, around the z-axis
  */
-function BaseLoaderScene(groundLights, texture, spotlight) {
+function BaseLoaderScene(groundLights, texture, spotlight, attach) {
   self = this;
   // setup some default elements
+  this.attach = attach;
   this.camera = initCamera(new THREE.Vector3(0, 0, 70));
   this.scene = new THREE.Scene();
   this.stats = initStats();
@@ -198,11 +199,15 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
             child.geometry.computeFaceNormals();
           });
           self.astronaut = astronaut;
-          self.astronaut.scale.set(0.1, 0.1, 0.1);
+          self.astronaut.scale.set(0.2, 0.2, 0.2);
           self.astronaut.position.set(0, -10, -50);
           self.astronaut.rotation.y = 3;
           self.astronaut.castShadow = true;
           self.astronaut.name = "avatar_1"
+          if (self.attach === 1) {
+            self.astronaut.position.set(-40, -40, -50);
+            self.group.add(self.astronaut);
+          }
         });
       }
    
@@ -215,10 +220,15 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
         objLoader.setMaterials(materials);
         objLoader.load('./assets/models/mario-sculpture-obj/mario-sculpture.obj', function (mario) {
           self.mario = mario;
-          self.mario.scale.set(.15, .15, .15);
-          self.mario.position.set(0, 0, -50);
+          self.mario.scale.set(.2, .2, .2);
+          self.mario.position.set(0, -10, -50);
           self.mario.rotation.y = 60;
           self.mario.name = "avatar_2";
+          if (self.attach === 1) {
+            self.mario.position.set(-40, -40, -50);
+            self.group.add(self.mario); 
+          }
+
         });
       });
     }
@@ -249,14 +259,18 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
       self.scene.background = cubeLoader.load(urls);
       self.scene.add(self.earth);
       self.scene.add(self.mars);
-      self.scene.add(self.astronaut);
+      if(self.attach === 0) {
+         self.scene.add(self.astronaut);
+      }
       self.scene.add(self.group_of_asteriods);
     }
     else if (self.texture === 2){
       self.scene.background = cubeLoader.load(urls1);
       self.scene.add(self.candycylinder1);
       self.scene.add(self.candycylinder2);
-      self.scene.add(self.mario);
+      if (self.attach === 0) {
+          self.scene.add(self.mario);
+      }
       self.scene.add(self.group_of_candies);
     }
 
@@ -265,7 +279,7 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
     if (self.spotlight === 1)
       self.addSpotLight();
     self.scene.add(self.group);
-    console.log(self.scene)
+    //console.log(self.scene)
     self.render(self.scene, self.camera);
   }
   //this.trackballControls = initTrackballControls(this.camera, this.renderer);
@@ -293,13 +307,18 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
      // orbit of spaceship fleet
     self.group.position.x = 160 * Math.cos(self.clock.getElapsedTime()) - 50; 
     self.group.position.z = 160 * Math.sin(self.clock.getElapsedTime()) - 300;   // orbit for asteroids 
+
     if (self.texture === 1) {
+      self.earth.rotation.y = self.clock.getElapsedTime() * 2;      // rotation of earth & mars
+      self.mars.rotation.y = self.clock.getElapsedTime() * 1.5; 
       self.group_of_asteriods.position.x = 100 * Math.cos(self.clock.getElapsedTime()) - 5;
       self.group_of_asteriods.position.y = 100 * Math.sin(self.clock.getElapsedTime()) - 5;
       self.group_of_asteriods.children[0].position.x = 100 * Math.cos(-self.clock.getElapsedTime()) -10;
       self.group_of_asteriods.children[0].position.y = 100 * Math.sin(-self.clock.getElapsedTime()) -10;
     } 
     else if (self.texture === 2) {
+      self.candycylinder1.rotation.y = self.clock.getElapsedTime() * 2;
+      self.candycylinder2.rotation.y = self.clock.getElapsedTime() * 1.5;   
       self.group_of_candies.position.x = 100 * Math.cos(self.clock.getElapsedTime()) - 5;
       self.group_of_candies.position.y = 100 * Math.sin(self.clock.getElapsedTime()) - 5;
       self.group_of_candies.children[0].position.x = 100 * Math.cos(-self.clock.getElapsedTime()) -10;
@@ -370,6 +389,10 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
   }
   this.updateSpotLights = function (spotlight) {
     self.spotlight = spotlight;
+    self.updateScene();
+  }
+  this.updateAvatar = function (attach) {
+    self.attach = attach;
     self.updateScene();
   }
 
