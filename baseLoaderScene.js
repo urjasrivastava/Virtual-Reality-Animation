@@ -19,7 +19,14 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
   this.renderer = initRenderer({
     antialias: true
   });
-  this.group;
+  
+  this.group = new THREE.Group();
+  this.group_of_asteriods = new THREE.Group();
+  this.group_of_candies = new THREE.Group();
+  this.mario;
+  this.astronaut;
+  this.alein;
+
   this.initObjects = function () {
     var textureLoader = new THREE.TextureLoader();
     var material;
@@ -81,6 +88,8 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
     self.asteroid1.position.y = 5;
     self.asteroid1.position.z = -50;
     self.asteroid1.name = "dynamic"
+    //self.asteroid1.scale.set(0.65, 0.65, 0.65);
+    self.group_of_asteriods.add(self.asteroid1);
 
     material = new THREE.MeshPhongMaterial({
       map: textureLoader.load('./assets/textures/dynamic-obstacles/m_candy1.jpg'),
@@ -91,6 +100,7 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
     self.candy1.position.y = 5;
     self.candy1.position.z = -50;
     self.candy1.name = "dynamic"
+    self.group_of_candies.add(self.candy1);
 
     hedron = new THREE.DodecahedronGeometry(5);
     material = new THREE.MeshPhongMaterial({
@@ -101,6 +111,7 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
     self.asteroid2.position.y = 5;
     self.asteroid2.position.z = -50;
     self.asteroid2.name = "dynamic"
+    self.group_of_asteriods.add(self.asteroid2);
 
     material = new THREE.MeshPhongMaterial({
       map: textureLoader.load('./assets/textures/dynamic-obstacles/m_candy2.jpg'),
@@ -111,6 +122,7 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
     self.candy2.position.y = 5;
     self.candy2.position.z = -50;
     self.candy2.name = "dynamic"
+    self.group_of_candies.add(self.candy2);
 
     hedron = new THREE.IcosahedronGeometry(8);
     material = new THREE.MeshPhongMaterial({
@@ -120,7 +132,8 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
     self.asteroid3.position.x = 90;
     self.asteroid3.position.y = 8;
     self.asteroid3.position.z = -70;
-    self.asteroid3.name = "dynamic"
+    self.asteroid3.name = "dynamic";
+    self.group_of_asteriods.add(self.asteroid3);
 
     material = new THREE.MeshPhongMaterial({
       map: textureLoader.load('./assets/textures/dynamic-obstacles/m_candy4.jpg'),
@@ -131,6 +144,7 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
     self.candy3.position.y = 8;
     self.candy3.position.z = -70;
     self.candy3.name = "dynamic"
+    self.group_of_candies.add(self.candy3);
 
     self.group = new THREE.Group();
     var loader = new THREE.OBJLoader();
@@ -164,21 +178,51 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
       self.group.add(spaceship);             // for group
       self.group.add(follower1);
       self.group.add(follower2);
-      var mtlLoader = new THREE.MTLLoader();
-      mtlLoader.setPath("./assets/models/mario-sculpture-obj/")
-      mtlLoader.load('mario-sculpture.mtl', function (materials) {
+      self.group.position.set(0, 0, -50);
+
+      
+
+      if (self.texture === 1) {   // alien for space texture
+        var _objloader = new THREE.OBJLoader();
+        _objloader.load('./assets/models/astronaut/astronaut.obj', function (astronaut) {
+
+            var material = new THREE.MeshPhongMaterial({
+            emissiveMap: textureLoader.load("./assets/models/astronaut/Astronaut_red_emis.jpg"),
+            specularMap: textureLoader.load("./assets/models/astronaut/Astronaut_red_spec.jpg"),
+            normalScale: new THREE.Vector2(1, 1)
+          });
+
+          astronaut.children.forEach(function (child) {
+            child.material = material;
+            child.geometry.computeVertexNormals();
+            child.geometry.computeFaceNormals();
+          });
+          self.astronaut = astronaut;
+          self.astronaut.scale.set(0.1, 0.1, 0.1);
+          self.astronaut.position.set(0, -10, -50);
+          self.astronaut.rotation.y = 3;
+          self.astronaut.castShadow = true;
+          self.astronaut.name = "avatar_1"
+        });
+      }
+   
+      else if (self.texture === 2) {
+        var mtlLoader = new THREE.MTLLoader();
+        mtlLoader.setPath("./assets/models/mario-sculpture-obj/")
+        mtlLoader.load('mario-sculpture.mtl', function (materials) {
         materials.preload();
         var objLoader = new THREE.OBJLoader();
         objLoader.setMaterials(materials);
-        objLoader.load('./assets/models/mario-sculpture-obj/mario-sculpture.obj', function (object) {
-          object.scale.set(.2, .2, .2);
-          object.position.set(-40,-30,40);
-          object.rotation.y = 60;
-          object.name = "avatar";
-          self.group.add(object);
+        objLoader.load('./assets/models/mario-sculpture-obj/mario-sculpture.obj', function (mario) {
+          self.mario = mario;
+          self.mario.scale.set(.15, .15, .15);
+          self.mario.position.set(0, 0, -50);
+          self.mario.rotation.y = 60;
+          self.mario.name = "avatar_2";
         });
       });
-      self.group.position.set(0, 0, -50);
+    }
+    
     });
   }
   this.updateScene = function () {
@@ -199,30 +243,29 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
       './assets/textures/cubemap/top1.png'
     ];
 
-
     self.scene = new THREE.Scene();
     var cubeLoader = new THREE.CubeTextureLoader();
     if (self.texture === 1) {
       self.scene.background = cubeLoader.load(urls);
       self.scene.add(self.earth);
       self.scene.add(self.mars);
-      self.scene.add(self.asteroid1);
-      self.scene.add(self.asteroid2);
-      self.scene.add(self.asteroid3);
+      self.scene.add(self.astronaut);
+      self.scene.add(self.group_of_asteriods);
     }
-    else {
+    else if (self.texture === 2){
       self.scene.background = cubeLoader.load(urls1);
       self.scene.add(self.candycylinder1);
       self.scene.add(self.candycylinder2);
-      self.scene.add(self.candy1);
-      self.scene.add(self.candy2);
-      self.scene.add(self.candy3);
+      self.scene.add(self.mario);
+      self.scene.add(self.group_of_candies);
     }
+
     if (self.withLights === 1)
       self._addLights();
     if (self.spotlight === 1)
       self.addSpotLight();
     self.scene.add(self.group);
+    console.log(self.scene)
     self.render(self.scene, self.camera);
   }
   //this.trackballControls = initTrackballControls(this.camera, this.renderer);
@@ -233,7 +276,7 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
    * @param {Three.Object3D} mesh render this mesh or object
    * @param {*} camera render using the provided camera settings
    */
-  this.render = function (scene, camera) {
+  this.render = function () {
     self._render();
   }
 
@@ -242,8 +285,27 @@ function BaseLoaderScene(groundLights, texture, spotlight) {
    */
   this._render = function () {
     self.stats.update();
+    //self.trackballControls.update(self.clock.getDelta());
+
     if (self.flyControls !== undefined)
       self.flyControls.update(self.clock.getDelta());
+
+     // orbit of spaceship fleet
+    self.group.position.x = 160 * Math.cos(self.clock.getElapsedTime()) - 50; 
+    self.group.position.z = 160 * Math.sin(self.clock.getElapsedTime()) - 300;   // orbit for asteroids 
+    if (self.texture === 1) {
+      self.group_of_asteriods.position.x = 100 * Math.cos(self.clock.getElapsedTime()) - 5;
+      self.group_of_asteriods.position.y = 100 * Math.sin(self.clock.getElapsedTime()) - 5;
+      self.group_of_asteriods.children[0].position.x = 100 * Math.cos(-self.clock.getElapsedTime()) -10;
+      self.group_of_asteriods.children[0].position.y = 100 * Math.sin(-self.clock.getElapsedTime()) -10;
+    } 
+    else if (self.texture === 2) {
+      self.group_of_candies.position.x = 100 * Math.cos(self.clock.getElapsedTime()) - 5;
+      self.group_of_candies.position.y = 100 * Math.sin(self.clock.getElapsedTime()) - 5;
+      self.group_of_candies.children[0].position.x = 100 * Math.cos(-self.clock.getElapsedTime()) -10;
+      self.group_of_candies.children[0].position.y = 100 * Math.sin(-self.clock.getElapsedTime()) -10;
+    }
+    
     requestAnimationFrame(self._render);
     self.renderer.render(self.scene, self.camera);
   }

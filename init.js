@@ -21,7 +21,7 @@ function init() {
             loader.updateCamera(this.cam);            
         }
         this.changeSpotLight=function(e){
-            this.spotLight=e;
+            this.spotLight=e;  
             loader.updateSpotLights(this.spotLight);
         }
     }
