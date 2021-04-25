@@ -1,6 +1,6 @@
 
 function init() {
-    loader= new BaseLoaderScene(1,1,1,1);
+    loader= new BaseLoaderScene(1,1,1,1,1);
     loader.initObjects();
     loader.initMovingObjects();
     var controls = new function () {
@@ -10,6 +10,12 @@ function init() {
         this.spotLight=1;
         this.cam=1;
         this.attach = 1;
+        this.intensity = 1;
+        
+        this.turnShipLight = function (e){
+            this.intensity=e;
+            loader.updateShipLights(this.intensity)
+        }
         this.changeTexture = function (e) {
             this.texture=e;
             loader.updateTexture(this.texture);
@@ -37,6 +43,7 @@ function init() {
     gui.add(controls,'cam',1,3).step(1).onChange(controls.changeCamera);
     gui.add(controls,'spotLight',1,2).step(1).onChange(controls.changeSpotLight);
     gui.add(controls, 'attach',1,2).step(1).onChange(controls.attachAvatar);
+    gui.add(controls,'intensity',0,1).step(1).onChange(controls.turnShipLight);
     // setup the scene for rendering
     controls.changeTexture(1);
     controls.attachAvatar(1);

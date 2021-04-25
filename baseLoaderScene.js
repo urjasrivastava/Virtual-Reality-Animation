@@ -3,9 +3,10 @@
  * demonstrate the different loaders. This create a scene, three
  * lights, and slowly rotates the model, around the z-axis
  */
-function BaseLoaderScene(groundLights, texture, spotlight, attach) {
+function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
   self = this;
   // setup some default elements
+  this.intensity = intensity;
   this.attach = attach;
   this.camera = initCamera(new THREE.Vector3(0, 0, 70));
   this.scene = new THREE.Scene();
@@ -167,7 +168,44 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
       spaceship.position.set(-40, -40, -100);
       spaceship.castShadow = true;
       spaceship.name = "leader"
+      
+      var pointColor = "#00ff00";
+      var tailLight = new THREE.PointLight(pointColor);
+      tailLight.decay = 0.1
+      tailLight.position.set(-40,-38,40)
+      tailLight.intensity=intensity*2;
+      tailLight.castShadow = true;
+    //headLight.position=self.group.position;
+    //console.log(self.group.position)
+    //this.scene.add(headLight);
+      var sphereLighttail = new THREE.SphereGeometry(9);
+      var sphereLightMaterialtail = new THREE.MeshBasicMaterial({
+          color: 0x00ff00
+      });
+      var sphereLightMeshtail = new THREE.Mesh(sphereLighttail, sphereLightMaterialtail);
+      sphereLightMeshtail.position.copy(tailLight.position) 
 
+
+      
+
+      var spotLight1 = new THREE.SpotLight( 0xff0000 );
+      spotLight1.position.set( -30,-48,-20);
+      spotLight1.intensity=self.intensity*100;
+      spotLight1.distance=0;
+      spotLight1.angle=6;
+      // spotLight1.shadow.camera.near = 500;
+      // spotLight1.shadow.camera.far = 4000;
+      // spotLight1.shadow.camera.fov = 30;
+      if(texture === 1){
+      spotLight1.target = self.earth
+      }
+      else{
+        spotLight1.target = self.candycylinder1
+      }
+      var spotLightHelper = new THREE.SpotLightHelper( spotLight1 );
+      self.scene.add( spotLightHelper );
+      // scene.add( spotLight1 );
+      console.log(intensity)
       var follower1 = spaceship.clone();
       follower1.position.set(-40, -40, -30);
       follower1.scale.set(0.03, 0.03, 0.03);
@@ -176,9 +214,12 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
       follower2.position.set(-40, -40, 40);
       follower2.scale.set(0.03, 0.03, 0.03);
       follower2.name = "2";
-      self.group.add(spaceship);             // for group
+      self.group.add(sphereLightMeshtail);             // for group
       self.group.add(follower1);
       self.group.add(follower2);
+      self.group.add(tailLight);
+      // self.group.add(cone);
+      self.group.add(spotLight1);
       self.group.position.set(0, 0, -50);     
 
       if (self.texture === 1) {   // alien for space texture
@@ -259,7 +300,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
       self.scene.add(self.candycylinder2);
       self.scene.add(self.group_of_candies);
     }
-
+    // pointLight.position.copy(spaceship.position);
     if (self.withLights === 1)
       self._addLights();
     if (self.spotlight === 1)
@@ -293,7 +334,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
      // orbit of spaceship fleet
     self.group.position.x = 160 * Math.cos(self.clock.getElapsedTime()) - 50; 
     self.group.position.z = 160 * Math.sin(self.clock.getElapsedTime()) - 300;   // orbit for asteroids 
-
+    // console.log(self.group.position)
     if (self.texture === 1) {
       self.earth.rotation.y = self.clock.getElapsedTime() * 2;      // rotation of earth & mars
       self.mars.rotation.y = self.clock.getElapsedTime() * 1.5; 
@@ -350,6 +391,32 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
     backlight2.lookAt(new THREE.Vector3(0, 15, 0));
     backlight2.name = "ground"
     this.scene.add(backlight2);
+    
+    // var pointColor = "#ff0000";
+    // var headLight = new THREE.SpotLight(pointColor);
+    // headLight.decay = 0.1
+    // headLight.position.x=15;
+    // headLight.position.y=10;
+    // headLight.position.z=10;
+    // headLight.intensity=50
+    // headLight.castShadow = true;
+    // headLight.position=self.group.position;
+    // //console.log(self.group.position)
+    // this.scene.add(headLight);
+    
+    
+    // var sphereLight = new THREE.SphereGeometry(2);
+    // var sphereLightMaterial = new THREE.MeshBasicMaterial({
+    //     color: 0x00ff00
+    // });
+    // var sphereLightMesh = new THREE.Mesh(sphereLight, sphereLightMaterial);
+    // sphereLightMesh.position.x = 10;
+    // sphereLightMesh.position.y = 10;
+    // sphereLightMesh.position.z = 10;
+    // this.scene.add(sphereLightMesh);
+
+
+
   }
 
   // add the lights
@@ -361,6 +428,10 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
   }
   this.updateLights = function (lights) {
     self.withLights = lights;
+    self.updateScene();
+  }
+  this.updateShipLights = function (intensity){
+    self.intensity = intensity
     self.updateScene();
   }
   this.updateCamera = function (cam) {
@@ -378,6 +449,12 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach) {
     self.spotlight = spotlight;
     self.updateScene();
   }
+  // this.pointLight = function(pointLight){
+  //   self.pointLight.position.copy(spaceship.position);
+  //   self.updateScene();
+  // }
+
+
   this.updateAvatar = function (attach) {
     self.attach = attach;
     self.initMovingObjects();
