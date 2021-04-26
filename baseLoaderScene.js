@@ -175,18 +175,13 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       tailLight.position.set(-40,-38,40)
       tailLight.intensity=intensity*2;
       tailLight.castShadow = true;
-    //headLight.position=self.group.position;
-    //console.log(self.group.position)
-    //this.scene.add(headLight);
+    
       var sphereLighttail = new THREE.SphereGeometry(9);
       var sphereLightMaterialtail = new THREE.MeshBasicMaterial({
           color: 0x00ff00
       });
       var sphereLightMeshtail = new THREE.Mesh(sphereLighttail, sphereLightMaterialtail);
-      sphereLightMeshtail.position.copy(tailLight.position) 
-
-
-      
+      sphereLightMeshtail.position.copy(tailLight.position)     
 
       var spotLight1 = new THREE.SpotLight( 0xff0000 );
       spotLight1.position.set( -30,-48,-20);
@@ -202,10 +197,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       else{
         spotLight1.target = self.candycylinder1
       }
-      var spotLightHelper = new THREE.SpotLightHelper( spotLight1 );
-      self.scene.add( spotLightHelper );
-      // scene.add( spotLight1 );
-      console.log(intensity)
+      
       var follower1 = spaceship.clone();
       follower1.position.set(-40, -40, -30);
       follower1.scale.set(0.03, 0.03, 0.03);
@@ -214,12 +206,13 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       follower2.position.set(-40, -40, 40);
       follower2.scale.set(0.03, 0.03, 0.03);
       follower2.name = "2";
-      self.group.add(sphereLightMeshtail);             // for group
+                // for group
       self.group.add(follower1);
       self.group.add(follower2);
+      if(self.intensity===1){
+      self.group.add(sphereLightMeshtail);   
       self.group.add(tailLight);
-      // self.group.add(cone);
-      self.group.add(spotLight1);
+      self.group.add(spotLight1);}
       self.group.position.set(0, 0, -50);     
 
       if (self.texture === 1) {   // alien for space texture
@@ -432,6 +425,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
   }
   this.updateShipLights = function (intensity){
     self.intensity = intensity
+    self.initMovingObjects();
     self.updateScene();
   }
   this.updateCamera = function (cam) {
