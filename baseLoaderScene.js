@@ -207,6 +207,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       follower2.scale.set(0.03, 0.03, 0.03);
       follower2.name = "2";
                 // for group
+      self.group.add(spaceship);
       self.group.add(follower1);
       self.group.add(follower2);
       if(self.intensity===1){
