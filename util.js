@@ -71,7 +71,7 @@ function initFlyControls(camera,renderer)
 {  
     
     var flyControls = new THREE.FlyControls(camera,renderer.domElement);
-    flyControls.movementSpeed = 25;
+    flyControls.movementSpeed = 20;
     flyControls.rollSpeed = Math.PI / 24;
     flyControls.autoForward = true;
     flyControls.dragToLook = false;

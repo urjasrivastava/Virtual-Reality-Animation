@@ -45,6 +45,7 @@ function init() {
     gui.add(controls, 'attach',1,2).step(1).onChange(controls.attachAvatar);
     gui.add(controls,'headlights',1,2).step(1).onChange(controls.turnShipLight);
     // setup the scene for rendering
+    controls.changeCamera(1);
     controls.changeTexture(1);
     controls.attachAvatar(1);
 }
