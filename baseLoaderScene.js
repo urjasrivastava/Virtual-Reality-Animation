@@ -25,6 +25,8 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
   this.group_of_asteriods = new THREE.Group();
   this.group_of_candies = new THREE.Group();
 
+  this.Collision_object_names = ['Mars', 'Asteriods', 'Satellite']
+
   // To remove unwanted warnings in console 
   console.warn = () => {};
   
@@ -48,7 +50,6 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
     self.earth.name = "static";
 
 
-
     sphere = new THREE.SphereGeometry(20, 50, 50);
     material = new THREE.MeshPhongMaterial({
       map: textureLoader.load('./assets/textures/mars/mars_1k_color.jpg'),
@@ -61,7 +62,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
     self.mars.position.y = 5;
     self.mars.position.z = -250;
     self.mars.name = "static";
-
+    
 
     var cylinder = new THREE.CylinderGeometry(10, 10, 50);
     material = new THREE.MeshPhongMaterial({
@@ -247,7 +248,8 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
         self.group.add(tailLight);
         self.group.add(spotLight1);
       }
-      self.group.position.set(0, -30, -50);     
+      self.group.position.set(0, 30, -50);
+          
 
       if (self.texture === 1) {   // alien for space texture
         var _objloader = new THREE.OBJLoader();
@@ -265,7 +267,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
             child.geometry.computeFaceNormals();
           });
           astronaut.scale.set(0.2, 0.2, 0.2);
-          astronaut.position.set(-40, -50, -50);
+          astronaut.position.set(-40, -50, -100);
           astronaut.rotation.y = 3;
           astronaut.castShadow = true;
           astronaut.name = "avatar_1"
@@ -310,23 +312,21 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
         switch(event.key) {
                   
           case "ArrowUp":
-            console.log("Key up pressed");
             if (self.texture === 1)
               self.astronaut.position.z -= zSpeed;
             else if(self.texture === 2)
-            self.mario.position.z -= zSpeed;
+              console.log("mario moving")
+              self.mario.position.z -= zSpeed;
             break;
       
           case "ArrowDown":
-            console.log("Key down pressed");
             if (self.texture === 1)
               self.astronaut.position.z += zSpeed;
             else if (self.texture === 2)
               self.mario.position.z += zSpeed;
             break;
       
-          case "ArrowLeft":
-            console.log("Key Left pressed"); 
+          case "ArrowLeft": 
             if (self.texture === 1)
               self.astronaut.position.x -= xSpeed;
             else if(self.texture === 2)
@@ -334,7 +334,6 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
             break;
       
           case "ArrowRight":
-            console.log("Key down pressed");
             if (self.texture === 1)
               self.astronaut.position.x += xSpeed;
             else if(self.texture === 2) 
@@ -342,7 +341,6 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
             break;
 
           case "w":
-            console.log("W pressed");
             if(self.texture === 1)
               self.astronaut.position.y += ySpeed;
             else if(self.texture === 2)
@@ -350,7 +348,6 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
           break;
 
           case "s":
-            console.log("S pressed");
             if(self.texture === 1)
               self.astronaut.position.y -= ySpeed;
             else if(self.texture === 2)
@@ -443,14 +440,16 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       self.flyControls.update(self.clock.getDelta());
 
      // orbit of spaceship fleet
-    self.group.position.x = 200 * Math.cos(self.clock.getElapsedTime() * 0.7) - 50; 
-    self.group.position.z = 300 * Math.sin(self.clock.getElapsedTime() * 0.7) - 300;   // orbit for asteroids 
+    self.group.position.x = 200 * Math.cos(self.clock.getElapsedTime() * 0.5) - 100; 
+    self.group.position.z = 400 * Math.sin(self.clock.getElapsedTime() * 0.5) - 300;   // orbit for asteroids 
     // console.log(self.group.position)
     if (self.texture === 1) {
       self.earth.rotation.y = self.clock.getElapsedTime() * 2;      // rotation of earth & mars
       self.mars.rotation.y = self.clock.getElapsedTime() * 1.5; 
-      self.group_of_asteriods.position.x = 100 * Math.cos(self.clock.getElapsedTime() *0.8) - 5;
-      self.group_of_asteriods.position.y = 100 * Math.sin(self.clock.getElapsedTime() *0.8) - 5;
+      self.group_of_asteriods.position.z = 100;
+      self.group_of_asteriods.children[0].position.z = -400;
+      self.group_of_asteriods.position.x = 100 * Math.cos(self.clock.getElapsedTime() *0.6) - 5;
+      self.group_of_asteriods.position.y = 100 * Math.sin(self.clock.getElapsedTime() *0.6) - 5;
       self.group_of_asteriods.children[0].position.x = 100 * Math.cos(-self.clock.getElapsedTime() * 0.5) -10;
       self.group_of_asteriods.children[0].position.y = 100 * Math.sin(-self.clock.getElapsedTime() * 0.5) -10;
 
@@ -467,6 +466,54 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       self.group_of_candies.children[0].position.x = 100 * Math.cos(-self.clock.getElapsedTime() *0.5) -10;
       self.group_of_candies.children[0].position.y = 100 * Math.sin(-self.clock.getElapsedTime() *0.5) -10;
     }
+
+    self.groupBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+    self.groupBBox.setFromObject(self.group);
+    self.marsBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+    self.marsBBox.setFromObject(self.mars);
+    self.group_of_asteriods_BBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+    self.group_of_asteriods_BBox.setFromObject(self.group_of_asteriods);  
+    self.astronaut_BBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+    self.astronaut_BBox.setFromObject(self.astronaut);
+    self.satellite_BBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+    self.satellite_BBox.setFromObject(self.satellite);
+
+    var Collision_objects = [];
+    Collision_objects.push(self.marsBBox);
+    Collision_objects.push(self.group_of_asteriods_BBox);
+    Collision_objects.push(self.satellite_BBox);
+
+    var i=0;
+    for (i=0; i<Collision_objects.length; i++) {         // for checking spaceship collisions
+      if ( self.groupBBox.intersectsBox(Collision_objects[i]) ) {
+        console.log("Collision of spaceship with " + self.Collision_object_names[i] );
+
+        if (Collision_objects[i] === self.marsBBox) 
+          self.group.position.x -= 50;
+        else
+          self.group.position.x -= 30;
+      }
+    }
+
+    
+    self.earthBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+    self.earthBBox.setFromObject(self.earth);
+    var temp_arr = [];
+    var Collision_objects_avatar = temp_arr.concat(Collision_objects);
+    Collision_objects_avatar.push(self.earthBBox);
+    Collision_objects_avatar.push(self.groupBBox);
+
+    if (self.attach === 2) {
+      for(i=0; i<Collision_objects_avatar.length; i++) {
+        if (self.astronaut_BBox.intersectsBox(Collision_objects_avatar[i])) {
+          self.astronaut.position.x -= 5;
+          console.log("Avatar collision")
+        }
+          
+      }
+    }
+
+    
     
     if(self.camera_selected === 3) {
       if (self.attach === 2) {
