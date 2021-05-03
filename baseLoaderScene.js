@@ -514,6 +514,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       if (self.firstPersonControl !== undefined)
       self.firstPersonControl.update(self.clock.getDelta());
     }
+    
     self.renderer.render(self.scene, self.camera);
     requestAnimationFrame(self._render);
 
@@ -583,7 +584,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
     }
     if (cam === 2) {
       self.camera_selected = 2;
-      self.camera.position.set(-30, 0, 150);
+      self.camera = initCamera(new THREE.Vector3(-30, 0, 150));
       self.firstPersonControl = undefined;
       self.flyControls = initFlyControls(self.camera, self.renderer);
       self.render(self.scene, self.camera);
