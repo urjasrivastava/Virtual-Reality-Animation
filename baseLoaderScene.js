@@ -5,7 +5,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
   this.intensity = intensity;
   this.attach = attach;
   this.camera = initCamera(new THREE.Vector3(-20, 0, 200));
-  this.avatar_camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000); 
+  this.avatar_camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
   this.scene = new THREE.Scene();
   this.stats = initStats();
   this.clock = new THREE.Clock();
@@ -20,7 +20,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
   this.renderer = initRenderer({
     antialias: true
   });
-  
+
   this.group = new THREE.Group();
   this.group_of_asteriods = new THREE.Group();
   this.group_of_candies = new THREE.Group();
@@ -28,8 +28,8 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
   this.Collision_object_names = ['Mars', 'Asteriods', 'Satellite']
 
   // To remove unwanted warnings in console 
-  console.warn = () => {};
-  
+  console.warn = () => { };
+
   this.initObjects = function () {
     var textureLoader = new THREE.TextureLoader();
     var material;
@@ -62,7 +62,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
     self.mars.position.y = 5;
     self.mars.position.z = -250;
     self.mars.name = "static";
-    
+
 
     var cylinder = new THREE.CylinderGeometry(10, 10, 50);
     material = new THREE.MeshPhongMaterial({
@@ -151,9 +151,9 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
     self.candy3.position.z = -70;
     self.candy3.name = "dynamic"
     self.group_of_candies.add(self.candy3);
-    
+
   }
-  this.initMovingObjects= function(){
+  this.initMovingObjects = function () {
     var textureLoader = new THREE.TextureLoader();
     self.group = new THREE.Group();
     var loader = new THREE.OBJLoader();
@@ -175,34 +175,34 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       spaceship.position.set(-40, -40, -100);
       spaceship.castShadow = true;
       spaceship.name = "leader"
-      
+
       var pointColor = "#00ff00";
       var tailLight = new THREE.PointLight(pointColor);
       tailLight.decay = 0.1
-      tailLight.position.set(-40,-38,40)
-      tailLight.intensity=intensity*2;
+      tailLight.position.set(-40, -38, 40)
+      tailLight.intensity = intensity * 2;
       tailLight.castShadow = true;
-    
+
       var sphereLighttail = new THREE.SphereGeometry(9);
       var sphereLightMaterialtail = new THREE.MeshBasicMaterial({
-          color: 0x00ff00
+        color: 0x00ff00
       });
       var sphereLightMeshtail = new THREE.Mesh(sphereLighttail, sphereLightMaterialtail);
-      sphereLightMeshtail.position.copy(tailLight.position)     
+      sphereLightMeshtail.position.copy(tailLight.position)
 
-      var spotLight1 = new THREE.SpotLight( 0xff0000 );
-      spotLight1.position.set( -30,-48,-20);
-      spotLight1.intensity=self.intensity*100;
-      spotLight1.distance=0;
-      spotLight1.angle=6;
-     
-      if(texture === 1){
-      spotLight1.target = self.earth
+      var spotLight1 = new THREE.SpotLight(0xff0000);
+      spotLight1.position.set(-30, -48, -20);
+      spotLight1.intensity = self.intensity * 100;
+      spotLight1.distance = 0;
+      spotLight1.angle = 6;
+
+      if (texture === 1) {
+        spotLight1.target = self.earth
       }
-      else{
+      else {
         spotLight1.target = self.candycylinder1
       }
-      
+
       var follower1 = spaceship.clone();
       follower1.position.set(-40, -40, -30);
       follower1.scale.set(0.03, 0.03, 0.03);
@@ -211,23 +211,23 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       follower2.position.set(-40, -40, 40);
       follower2.scale.set(0.03, 0.03, 0.03);
       follower2.name = "2";
-                // for group
+      // for group
       self.group.add(spaceship);
       self.group.add(follower1);
       self.group.add(follower2);
-      if(self.intensity===1){
-        self.group.add(sphereLightMeshtail);   
+      if (self.intensity === 1) {
+        self.group.add(sphereLightMeshtail);
         self.group.add(tailLight);
         self.group.add(spotLight1);
       }
       self.group.position.set(0, 30, -50);
-          
+
 
       if (self.texture === 1) {   // alien for space texture
         var _objloader = new THREE.OBJLoader();
         _objloader.load('./assets/models/astronaut/astronaut.obj', function (astronaut) {
 
-            var material = new THREE.MeshPhongMaterial({
+          var material = new THREE.MeshPhongMaterial({
             emissiveMap: textureLoader.load("./assets/models/astronaut/Astronaut_red_emis.jpg"),
             specularMap: textureLoader.load("./assets/models/astronaut/Astronaut_red_spec.jpg"),
             normalScale: new THREE.Vector2(1, 1)
@@ -249,31 +249,31 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
             self.group.add(astronaut);
           }
         });
-      }   
+      }
       else if (self.texture === 2) {
         var mtlLoader = new THREE.MTLLoader();
         mtlLoader.setPath("./assets/models/mario-sculpture-obj/")
         mtlLoader.load('mario-sculpture.mtl', function (materials) {
-        materials.preload();
-        var objLoader = new THREE.OBJLoader();
-        objLoader.setMaterials(materials);
-        objLoader.load('./assets/models/mario-sculpture-obj/mario-sculpture.obj', function (mario) {
-          mario.scale.set(.2, .2, .2);
-          mario.position.set(-40, -30, -50);
-          mario.rotation.y = 60;
-          mario.name = "avatar_2";
-          self.mario = mario;
-          if (self.attach === 1) {
-            //mario.position.set(-40, -30, -50);
-            self.group.add(mario); 
-          }
+          materials.preload();
+          var objLoader = new THREE.OBJLoader();
+          objLoader.setMaterials(materials);
+          objLoader.load('./assets/models/mario-sculpture-obj/mario-sculpture.obj', function (mario) {
+            mario.scale.set(.2, .2, .2);
+            mario.position.set(-40, -30, -50);
+            mario.rotation.y = 60;
+            mario.name = "avatar_2";
+            self.mario = mario;
+            if (self.attach === 1) {
+              //mario.position.set(-40, -30, -50);
+              self.group.add(mario);
+            }
+          });
         });
-      });
-    }    
+      }
     });
-    this.satellite; 
+    this.satellite;
     var loader_ = new THREE.OBJLoader();
-      loader_.load('./assets/models/Chandra/chandra_v09.obj', function (satellite) {
+    loader_.load('./assets/models/Chandra/chandra_v09.obj', function (satellite) {
       var material = new THREE.MeshPhongMaterial({
         map: textureLoader.load('./assets/models/Chandra/texture/chandra_tex_01.png'),
         specularMap: textureLoader.load("./assets/models/Chandra/texture/foil_gold_ramp.png"),
@@ -281,79 +281,79 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
         normalScale: new THREE.Vector2(1, 1)
       });
 
-        satellite.children.forEach(function (child) {
-          child.material = material;
-          child.geometry.computeVertexNormals();
-          child.geometry.computeFaceNormals();
-        });
+      satellite.children.forEach(function (child) {
+        child.material = material;
+        child.geometry.computeVertexNormals();
+        child.geometry.computeFaceNormals();
+      });
 
-        satellite.scale.set(2, 2, 2);
-        satellite.position.set(50, 5, -250);
-        satellite.castShadow = true;
-        satellite.name = "satellite"
-        self.satellite = satellite;
-        self.updateScene();
-        
+      satellite.scale.set(2, 2, 2);
+      satellite.position.set(50, 5, -250);
+      satellite.castShadow = true;
+      satellite.name = "satellite"
+      self.satellite = satellite;
+      self.updateScene();
+
     });
   }
 
   const xSpeed = 1;
   const zSpeed = 1;
   const ySpeed = 1;
-			
-  window.addEventListener("keydown", function(event) {
 
-    if (self.attach === 2 ) {
-    
-        switch(event.key) {
-                  
-          case "ArrowUp":
-            if (self.texture === 1)
-              self.astronaut.position.z -= zSpeed;
-            else if(self.texture === 2)
-              console.log("mario moving")
-              self.mario.position.z -= zSpeed;
-            break;
-      
-          case "ArrowDown":
-            if (self.texture === 1)
-              self.astronaut.position.z += zSpeed;
-            else if (self.texture === 2)
-              self.mario.position.z += zSpeed;
-            break;
-      
-          case "ArrowLeft": 
-            if (self.texture === 1)
-              self.astronaut.position.x -= xSpeed;
-            else if(self.texture === 2)
-              self.mario.position.x -= xSpeed;
-            break;
-      
-          case "ArrowRight":
-            if (self.texture === 1)
-              self.astronaut.position.x += xSpeed;
-            else if(self.texture === 2) 
-              self.mario.position.x += xSpeed;
-            break;
+  window.addEventListener("keydown", function (event) {
 
-          case "w":
-            if(self.texture === 1)
-              self.astronaut.position.y += ySpeed;
-            else if(self.texture === 2)
-              self.mario.position.y += ySpeed;
+    if (self.attach === 2) {
+
+      switch (event.key) {
+
+        case "ArrowUp":
+          if (self.texture === 1)
+            self.astronaut.position.z -= zSpeed;
+          else if (self.texture === 2)
+            console.log("mario moving")
+          self.mario.position.z -= zSpeed;
           break;
 
-          case "s":
-            if(self.texture === 1)
-              self.astronaut.position.y -= ySpeed;
-            else if(self.texture === 2)
-              self.mario.position.y -= ySpeed;
-            break;
+        case "ArrowDown":
+          if (self.texture === 1)
+            self.astronaut.position.z += zSpeed;
+          else if (self.texture === 2)
+            self.mario.position.z += zSpeed;
+          break;
 
-        }
-      } 
-    }, true );  
-        
+        case "ArrowLeft":
+          if (self.texture === 1)
+            self.astronaut.position.x -= xSpeed;
+          else if (self.texture === 2)
+            self.mario.position.x -= xSpeed;
+          break;
+
+        case "ArrowRight":
+          if (self.texture === 1)
+            self.astronaut.position.x += xSpeed;
+          else if (self.texture === 2)
+            self.mario.position.x += xSpeed;
+          break;
+
+        case "w":
+          if (self.texture === 1)
+            self.astronaut.position.y += ySpeed;
+          else if (self.texture === 2)
+            self.mario.position.y += ySpeed;
+          break;
+
+        case "s":
+          if (self.texture === 1)
+            self.astronaut.position.y -= ySpeed;
+          else if (self.texture === 2)
+            self.mario.position.y -= ySpeed;
+          break;
+
+      }
+    }
+  }, true);
+
   this.updateScene = function () {
     var urls = [
       './assets/textures/cubemap/top.png',
@@ -380,19 +380,20 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       self.scene.add(self.satellite);
       self.scene.add(self.mars);
       self.scene.add(self.group_of_asteriods);
-      if(self.attach === 2) {
+      if (self.attach === 2) {
         self.scene.add(self.astronaut);
       }
-     
+
     }
-    else if (self.texture === 2){
+    else if (self.texture === 2) {
       self.scene.background = cubeLoader.load(urls1);
       self.scene.add(self.candycylinder1);
       self.scene.add(self.candycylinder2);
       self.scene.add(self.group_of_candies);
-      if(self.attach === 2) {
-        self.scene.add(self.mario);      }
-     
+      if (self.attach === 2) {
+        self.scene.add(self.mario);
+      }
+
     }
     // pointLight.position.copy(spaceship.position);
     if (self.withLights === 1)
@@ -400,28 +401,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
     if (self.spotlight === 1)
       self.addSpotLight();
     self.scene.add(self.group);
-    //console.log(self.scene)
-
-    if(self.camera_selected === 3) {
-      if (self.attach === 2) {
-          if (self.texture === 1) {
-            self.avatar_camera.position.set(self.astronaut.position.x, self.astronaut.position.y, self.astronaut.position.z);
-          }
-          else if (self.texture === 2) {
-            self.avatar_camera.position.set(self.mario.position.x, self.mario.position.y, self.mario.position.z);
-          }
-      }
-      else if(self.attach === 1) {
-         self.avatar_camera.position.set(self.group.position.x, self.group.position.y, self.group.position.z);
-      }
-      self.avatar_camera.position.add( self.avatar_camera.getWorldDirection() );
-      //self.avatar_camera.lookAt(new THREE.Vector3(self.group.position.x, self.group.position.y, self.group.position.z));
-      self.render(self.scene, self.avatar_camera);
-    }
-    else {
-      self.render(self.scene, self.camera);
-    }
-    console.log(self.astronaut);
+    self.render(self.scene, self.camera);
   }
   //this.trackballControls = initTrackballControls(this.camera, this.renderer);
 
@@ -435,116 +415,108 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
 
     if (self.flyControls !== undefined)
       self.flyControls.update(self.clock.getDelta());
-
-     // orbit of spaceship fleet
-    self.group.position.x = 200 * Math.cos(self.clock.getElapsedTime() * 0.5) - 100; 
+    // orbit of spaceship fleet
+    self.group.position.x = 200 * Math.cos(self.clock.getElapsedTime() * 0.5) - 100;
     self.group.position.z = 400 * Math.sin(self.clock.getElapsedTime() * 0.5) - 300;   // orbit for asteroids 
     // console.log(self.group.position)
     if (self.texture === 1) {
       self.earth.rotation.y = self.clock.getElapsedTime() * 2;      // rotation of earth & mars
-      self.mars.rotation.y = self.clock.getElapsedTime() * 1.5; 
+      self.mars.rotation.y = self.clock.getElapsedTime() * 1.5;
       self.group_of_asteriods.position.z = 100;
       self.group_of_asteriods.children[0].position.z = -400;
-      self.group_of_asteriods.position.x = 100 * Math.cos(self.clock.getElapsedTime() *0.6) - 5;
-      self.group_of_asteriods.position.y = 100 * Math.sin(self.clock.getElapsedTime() *0.6) - 5;
-      self.group_of_asteriods.children[0].position.x = 100 * Math.cos(-self.clock.getElapsedTime() * 0.5) -10;
-      self.group_of_asteriods.children[0].position.y = 100 * Math.sin(-self.clock.getElapsedTime() * 0.5) -10;
+      self.group_of_asteriods.position.x = 100 * Math.cos(self.clock.getElapsedTime() * 0.6) - 5;
+      self.group_of_asteriods.position.y = 100 * Math.sin(self.clock.getElapsedTime() * 0.6) - 5;
+      self.group_of_asteriods.children[0].position.x = 100 * Math.cos(-self.clock.getElapsedTime() * 0.5) - 10;
+      self.group_of_asteriods.children[0].position.y = 100 * Math.sin(-self.clock.getElapsedTime() * 0.5) - 10;
 
       self.satellite.rotation.y = self.clock.getElapsedTime();
       self.satellite.position.x = 50 * Math.cos(self.clock.getElapsedTime()) + 50;
       self.satellite.position.y = 50 * Math.cos(self.clock.getElapsedTime()) + 5;
       self.satellite.position.z = 75 * Math.sin(self.clock.getElapsedTime()) - 250;
-    } 
-    else if (self.texture === 2) {  
+    }
+    else if (self.texture === 2) {
       self.candycylinder1.rotation.y = self.clock.getElapsedTime() * 2;
-      self.candycylinder2.rotation.y = self.clock.getElapsedTime() * 1.5;   
+      self.candycylinder2.rotation.y = self.clock.getElapsedTime() * 1.5;
       self.group_of_candies.position.x = 100 * Math.cos(self.clock.getElapsedTime()) - 5;
       self.group_of_candies.position.y = 100 * Math.sin(self.clock.getElapsedTime()) - 5;
-      self.group_of_candies.children[0].position.x = 100 * Math.cos(-self.clock.getElapsedTime() *0.5) -10;
-      self.group_of_candies.children[0].position.y = 100 * Math.sin(-self.clock.getElapsedTime() *0.5) -10;
+      self.group_of_candies.children[0].position.x = 100 * Math.cos(-self.clock.getElapsedTime() * 0.5) - 10;
+      self.group_of_candies.children[0].position.y = 100 * Math.sin(-self.clock.getElapsedTime() * 0.5) - 10;
     }
 
     self.groupBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
     self.groupBBox.setFromObject(self.group);
     self.static1BBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
-    if(self.texture===1)
-    self.static1BBox.setFromObject(self.mars);
+    if (self.texture === 1)
+      self.static1BBox.setFromObject(self.mars);
     else
-    self.static1BBox.setFromObject(self.candycylinder2);
+      self.static1BBox.setFromObject(self.candycylinder2);
     self.static2BBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
-    if(self.texture===1)
-    self.static2BBox.setFromObject(self.earth);
+    if (self.texture === 1)
+      self.static2BBox.setFromObject(self.earth);
     else
-    self.static2BBox.setFromObject(self.candycylinder1);
+      self.static2BBox.setFromObject(self.candycylinder1);
     self.dynamicObstaclesBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
-    if(self.texture===1)
-    self.dynamicObstaclesBBox.setFromObject(self.group_of_asteriods);  
+    if (self.texture === 1)
+      self.dynamicObstaclesBBox.setFromObject(self.group_of_asteriods);
     else
-    self.dynamicObstaclesBBox.setFromObject(self.group_of_candies); 
+      self.dynamicObstaclesBBox.setFromObject(self.group_of_candies);
     self.avatarBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
-    if(self.texture===1)
-    self.avatarBBox.setFromObject(self.astronaut);
+    if (self.texture === 1)
+      self.avatarBBox.setFromObject(self.astronaut);
     else
-    self.avatarBBox.setFromObject(self.mario);
+      self.avatarBBox.setFromObject(self.mario);
     self.satellite_BBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
     self.satellite_BBox.setFromObject(self.satellite);
-   
+
     var Collision_objects = [];
     Collision_objects.push(self.static1BBox);
     Collision_objects.push(self.dynamicObstaclesBBox);
     Collision_objects.push(self.static2BBox);
-    if(self.texture===1)
-    Collision_objects.push(self.satellite_BBox);
-   
-    var i=0;
-    for (i=0; i<Collision_objects.length; i++) {         // for checking spaceship collisions
-      if ( self.groupBBox.intersectsBox(Collision_objects[i]) ) {
-        console.log("Collision of spaceship with " + self.Collision_object_names[i] );
-          self.group.position.x -= 30;
+    if (self.texture === 1)
+      Collision_objects.push(self.satellite_BBox);
+
+    var i = 0;
+    for (i = 0; i < Collision_objects.length; i++) {         // for checking spaceship collisions
+      if (self.groupBBox.intersectsBox(Collision_objects[i])) {
+        console.log("Collision of spaceship with " + self.Collision_object_names[i]);
+        self.group.position.x -= 40;
       }
-    }    
-    
+    }
+
     var temp_arr = [];
     var Collision_objects_avatar = temp_arr.concat(Collision_objects);
     Collision_objects_avatar.push(self.groupBBox);
 
     if (self.attach === 2) {
-      for(i=0; i<Collision_objects_avatar.length; i++) {
+      for (i = 0; i < Collision_objects_avatar.length; i++) {
         if (self.avatarBBox.intersectsBox(Collision_objects_avatar[i])) {
-          if(self.texture===1)
-          self.astronaut.position.x -= 5;
+          if (self.texture === 1)
+            self.astronaut.position.x -= 5;
           else
-          self.mario.position.x -= 5;
+            self.mario.position.x -= 5;
           console.log("Avatar collision")
         }
-          
+
       }
     }
-
-    
-    
-    if(self.camera_selected === 3) {
+    if (self.camera_selected === 3) {
       if (self.attach === 2) {
         if (self.texture === 1) {
-          self.avatar_camera.position.set(self.astronaut.position.x, self.astronaut.position.y, self.astronaut.position.z);
+          self.camera.position.set(self.astronaut.position.x, self.astronaut.position.y, self.astronaut.position.z);
         }
         else if (self.texture === 2) {
-          self.avatar_camera.position.set(self.mario.position.x, self.mario.position.y, self.mario.position.z);
+          self.camera.position.set(self.mario.position.x, self.mario.position.y, self.mario.position.z);
         }
-    }
-      else if(self.attach === 1) {
-        self.avatar_camera.position.set(self.group.position.x, self.group.position.y, self.group.position.z);
       }
-      self.avatar_camera.position.add( self.avatar_camera.getWorldDirection() );
-      //self.avatar_camera.lookAt(new THREE.Vector3(self.group.position.x, self.group.position.y, self.group.position.z));
-      self.renderer.render(self.scene, self.avatar_camera);
+      else if (self.attach === 1) {
+        self.camera.position.set(self.group.position.x, self.group.position.y, self.group.position.z);
+      }
+      if (self.firstPersonControl !== undefined)
+      self.firstPersonControl.update(self.clock.getDelta());
     }
-    else {
-      self.renderer.render(self.scene, self.camera);
-    }
-
+    self.renderer.render(self.scene, self.camera);
     requestAnimationFrame(self._render);
-    
+
   }
   this.addSpotLight = function () {
     var spotLight = new THREE.SpotLight("#ffffff");
@@ -596,7 +568,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
     self.withLights = lights;
     self.updateScene();
   }
-  this.updateShipLights = function (intensity){
+  this.updateShipLights = function (intensity) {
     self.intensity = intensity
     self.initMovingObjects();
     self.updateScene();
@@ -606,21 +578,33 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       self.camera_selected = 1;
       self.flyControls = undefined;
       self.firstPersonControl = undefined;
-      //self.camera = initCamera(new THREE.Vector3(-30, 0, 150));
+      self.camera = initCamera(new THREE.Vector3(-30, 0, 150));
       self.render(self.scene, self.camera);
     }
     if (cam === 2) {
       self.camera_selected = 2;
+      self.camera.position.set(-30, 0, 150);
+      self.firstPersonControl = undefined;
       self.flyControls = initFlyControls(self.camera, self.renderer);
       self.render(self.scene, self.camera);
     }
     if (cam === 3) {
-      self.camera_selected = 3;
       self.flyControls = undefined;
-      self.firstPersonControl = undefined;
-      //self.render(self.scene, self.avatar_camera);
+      self.camera_selected = 3;
+      if (self.attach === 2) {
+        if (self.texture === 1) {
+          self.camera.position.set(self.astronaut.position.x, self.astronaut.position.y, self.astronaut.position.z);
+        }
+        else if (self.texture === 2) {
+          self.camera.position.set(self.mario.position.x, self.mario.position.y, self.mario.position.z);
+        }
+      }
+      else if (self.attach === 1) {
+        self.camera.position.set(self.group.position.x, self.group.position.y, self.group.position.z);
+      }
+      self.firstPersonControl = initFirstPersonControls(self.camera);
+      self.render(self.scene, self.camera);
     }
-
   }
   this.updateSpotLights = function (spotlight) {
     self.spotlight = spotlight;
