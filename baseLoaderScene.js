@@ -427,7 +427,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
     else {
       self.render(self.scene, self.camera);
     }
-
+    console.log(self.astronaut);
   }
   //this.trackballControls = initTrackballControls(this.camera, this.renderer);
 
