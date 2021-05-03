@@ -156,34 +156,6 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
   this.initMovingObjects= function(){
     var textureLoader = new THREE.TextureLoader();
     self.group = new THREE.Group();
-    
-    this.satellite; 
-    var loader_ = new THREE.OBJLoader();
-      loader_.load('./assets/models/Chandra/chandra_v09.obj', function (satellite) {
-      var material = new THREE.MeshPhongMaterial({
-        map: textureLoader.load('./assets/models/Chandra/texture/chandra_tex_01.png'),
-        specularMap: textureLoader.load("./assets/models/Chandra/texture/foil_gold_ramp.png"),
-        normalMap: textureLoader.load("./assets/models/Chandra/texture/foil_n.png"),
-        normalScale: new THREE.Vector2(1, 1)
-      });
-
-        satellite.children.forEach(function (child) {
-          child.material = material;
-          child.geometry.computeVertexNormals();
-          child.geometry.computeFaceNormals();
-        });
-
-        satellite.scale.set(2, 2, 2);
-        satellite.position.set(50, 5, -250);
-        satellite.castShadow = true;
-        satellite.name = "satellite"
-        self.satellite = satellite;
-        self.updateScene();
-        
-    });
-
-
-
     var loader = new THREE.OBJLoader();
     loader.load('./assets/models/spaceship/SciFi_Fighter_AK5.obj', function (spaceship) {
 
@@ -299,6 +271,30 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       });
     }    
     });
+    this.satellite; 
+    var loader_ = new THREE.OBJLoader();
+      loader_.load('./assets/models/Chandra/chandra_v09.obj', function (satellite) {
+      var material = new THREE.MeshPhongMaterial({
+        map: textureLoader.load('./assets/models/Chandra/texture/chandra_tex_01.png'),
+        specularMap: textureLoader.load("./assets/models/Chandra/texture/foil_gold_ramp.png"),
+        normalMap: textureLoader.load("./assets/models/Chandra/texture/foil_n.png"),
+        normalScale: new THREE.Vector2(1, 1)
+      });
+
+        satellite.children.forEach(function (child) {
+          child.material = material;
+          child.geometry.computeVertexNormals();
+          child.geometry.computeFaceNormals();
+        });
+
+        satellite.scale.set(2, 2, 2);
+        satellite.position.set(50, 5, -250);
+        satellite.castShadow = true;
+        satellite.name = "satellite"
+        self.satellite = satellite;
+        self.updateScene();
+        
+    });
   }
 
   const xSpeed = 1;
@@ -383,19 +379,20 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       self.scene.add(self.earth);
       self.scene.add(self.satellite);
       self.scene.add(self.mars);
+      self.scene.add(self.group_of_asteriods);
       if(self.attach === 2) {
         self.scene.add(self.astronaut);
       }
-      self.scene.add(self.group_of_asteriods);
+     
     }
     else if (self.texture === 2){
       self.scene.background = cubeLoader.load(urls1);
       self.scene.add(self.candycylinder1);
       self.scene.add(self.candycylinder2);
-      if(self.attach === 2) {
-        self.scene.add(self.mario);
-      }
       self.scene.add(self.group_of_candies);
+      if(self.attach === 2) {
+        self.scene.add(self.mario);      }
+     
     }
     // pointLight.position.copy(spaceship.position);
     if (self.withLights === 1)
@@ -469,44 +466,56 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
 
     self.groupBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
     self.groupBBox.setFromObject(self.group);
-    self.marsBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
-    self.marsBBox.setFromObject(self.mars);
-    self.group_of_asteriods_BBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
-    self.group_of_asteriods_BBox.setFromObject(self.group_of_asteriods);  
-    self.astronaut_BBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
-    self.astronaut_BBox.setFromObject(self.astronaut);
+    self.static1BBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+    if(self.texture===1)
+    self.static1BBox.setFromObject(self.mars);
+    else
+    self.static1BBox.setFromObject(self.candycylinder2);
+    self.static2BBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+    if(self.texture===1)
+    self.static2BBox.setFromObject(self.earth);
+    else
+    self.static2BBox.setFromObject(self.candycylinder1);
+    self.dynamicObstaclesBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+    if(self.texture===1)
+    self.dynamicObstaclesBBox.setFromObject(self.group_of_asteriods);  
+    else
+    self.dynamicObstaclesBBox.setFromObject(self.group_of_candies); 
+    self.avatarBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+    if(self.texture===1)
+    self.avatarBBox.setFromObject(self.astronaut);
+    else
+    self.avatarBBox.setFromObject(self.mario);
     self.satellite_BBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
     self.satellite_BBox.setFromObject(self.satellite);
-
+   
     var Collision_objects = [];
-    Collision_objects.push(self.marsBBox);
-    Collision_objects.push(self.group_of_asteriods_BBox);
+    Collision_objects.push(self.static1BBox);
+    Collision_objects.push(self.dynamicObstaclesBBox);
+    Collision_objects.push(self.static2BBox);
+    if(self.texture===1)
     Collision_objects.push(self.satellite_BBox);
-
+   
     var i=0;
     for (i=0; i<Collision_objects.length; i++) {         // for checking spaceship collisions
       if ( self.groupBBox.intersectsBox(Collision_objects[i]) ) {
         console.log("Collision of spaceship with " + self.Collision_object_names[i] );
-
-        if (Collision_objects[i] === self.marsBBox) 
-          self.group.position.x -= 50;
-        else
           self.group.position.x -= 30;
       }
-    }
-
+    }    
     
-    self.earthBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
-    self.earthBBox.setFromObject(self.earth);
     var temp_arr = [];
     var Collision_objects_avatar = temp_arr.concat(Collision_objects);
-    Collision_objects_avatar.push(self.earthBBox);
+    Collision_objects_avatar.push(self.static2BBox);
     Collision_objects_avatar.push(self.groupBBox);
 
     if (self.attach === 2) {
       for(i=0; i<Collision_objects_avatar.length; i++) {
-        if (self.astronaut_BBox.intersectsBox(Collision_objects_avatar[i])) {
+        if (self.avatarBBox.intersectsBox(Collision_objects_avatar[i])) {
+          if(self.texture===1)
           self.astronaut.position.x -= 5;
+          else
+          self.mario.position.x -= 5;
           console.log("Avatar collision")
         }
           
