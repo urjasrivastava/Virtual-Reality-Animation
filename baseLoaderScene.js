@@ -506,7 +506,6 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
     
     var temp_arr = [];
     var Collision_objects_avatar = temp_arr.concat(Collision_objects);
-    Collision_objects_avatar.push(self.static2BBox);
     Collision_objects_avatar.push(self.groupBBox);
 
     if (self.attach === 2) {
