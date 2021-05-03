@@ -62,7 +62,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
     self.mars.position.y = 5;
     self.mars.position.z = -250;
     self.mars.name = "static";
-
+ 
 
     var cylinder = new THREE.CylinderGeometry(10, 10, 50);
     material = new THREE.MeshPhongMaterial({
@@ -311,8 +311,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
           if (self.texture === 1)
             self.astronaut.position.z -= zSpeed;
           else if (self.texture === 2)
-            console.log("mario moving")
-          self.mario.position.z -= zSpeed;
+            self.mario.position.z -= zSpeed;
           break;
 
         case "ArrowDown":
@@ -511,8 +510,8 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       else if (self.attach === 1) {
         self.camera.position.set(self.group.position.x, self.group.position.y, self.group.position.z);
       }
-      if (self.firstPersonControl !== undefined)
-      self.firstPersonControl.update(self.clock.getDelta());
+      // if (self.firstPersonControl !== undefined)
+      // self.firstPersonControl.update(self.clock.getDelta());
     }
     
     self.renderer.render(self.scene, self.camera);
@@ -603,7 +602,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       else if (self.attach === 1) {
         self.camera.position.set(self.group.position.x, self.group.position.y, self.group.position.z);
       }
-      self.firstPersonControl = initFirstPersonControls(self.camera);
+      // self.firstPersonControl = initFirstPersonControls(self.camera);
       self.render(self.scene, self.camera);
     }
   }
