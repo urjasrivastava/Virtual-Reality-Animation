@@ -479,7 +479,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
     for (i = 0; i < Collision_objects.length; i++) {         // for checking spaceship collisions
       if (self.groupBBox.intersectsBox(Collision_objects[i])) {
         console.log("Collision of spaceship with " + self.Collision_object_names[i]);
-        self.group.position.x -= 40;
+        self.group.position.x -= 50;
       }
     }
 
