@@ -293,7 +293,6 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       satellite.name = "satellite"
       self.satellite = satellite;
       self.updateScene();
-
     });
   }
 
@@ -394,7 +393,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
       }
 
     }
-    // pointLight.position.copy(spaceship.position);
+    
     if (self.withLights === 1)
       self._addLights();
     if (self.spotlight === 1)
@@ -402,7 +401,7 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
     self.scene.add(self.group);
     self.render(self.scene, self.camera);
   }
-  //this.trackballControls = initTrackballControls(this.camera, this.renderer);
+
 
   this.render = function () {
     self._render();

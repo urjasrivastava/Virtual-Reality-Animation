@@ -77,17 +77,3 @@ function initFlyControls(camera,renderer)
     flyControls.dragToLook = false;
     return flyControls;
 }
-
-function initFirstPersonControls(camera)
-{
-    var fpControls = new THREE.FirstPersonControls(camera);
-    fpControls.lookSpeed = 0.2;
-    fpControls.movementSpeed = 40;
-    fpControls.lookVertical = true;
-    fpControls.constrainVertical = true;
-    fpControls.verticalMin = 1.0;
-    fpControls.verticalMax = 5.0;
-    fpControls.lon = -90;
-    fpControls.lat = -90;
-    return fpControls;
-}

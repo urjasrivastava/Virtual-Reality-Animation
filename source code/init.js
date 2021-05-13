@@ -4,7 +4,6 @@ function init() {
     loader.initObjects();
     loader.initMovingObjects();
     var controls = new function () {
-        var self = this;
         this.texture = 1;
         this.groundLights=1;
         this.spotLight=1;
