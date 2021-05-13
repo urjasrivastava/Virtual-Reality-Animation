@@ -5,7 +5,6 @@ function BaseLoaderScene(groundLights, texture, spotlight, attach, intensity) {
   this.intensity = intensity;
   this.attach = attach;
   this.camera = initCamera(new THREE.Vector3(-20, 0, 200));
-  this.avatar_camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
   this.scene = new THREE.Scene();
   this.stats = initStats();
   this.clock = new THREE.Clock();
